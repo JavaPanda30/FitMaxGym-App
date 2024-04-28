@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitMax Gym</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="index.css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+
+  <body
+    style="
+      background-color: #000000;
+      background-image: linear-gradient(to top, #3c3737dc, #000000);
+      color: white;
+      height: 150vh;
+    "
+  >
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button
+            type="button"
+            class="navbar-toggle collapsed"
+            data-toggle="collapse"
+            data-target="#navbar-collapse"
+          >
+            <span class="sr-only">Toggle Navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="#" class="navbar-brand">FitMax</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="Services.html">Services</a></li>
+            <li class="active"><a href="Pricing.html">Pricing</a></li>
+            <li><a href="Contactus.html">Contact Us</a></li>
+            <li><a href="profile.html">Profile</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" id="logout-btn">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <section id="pricing">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <h1>Pricing</h1>
+            <p>We offer flexible pricing options to suit your needs</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="plan center">
+              <h3>Basic Plan</h3>
+              <p class="price">$20/month</p>
+              <ul>
+                <li>Access to weight training equipment</li>
+                <li>Access to cardio equipment</li>
+              </ul>
+              <button onclick="selectPlan('Basic Plan')">Select</button>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="plan center">
+              <h3>Standard Plan</h3>
+              <p class="price">$40/month</p>
+              <ul>
+                <li>Access to weight training equipment</li>
+                <li>Access to cardio equipment</li>
+                <li>Access to group fitness classes</li>
+              </ul>
+              <button onclick="selectPlan('Standard Plan')">Select</button>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="plan center">
+              <h3>Premium Plan</h3>
+              <p class="price">$60/month</p>
+              <ul>
+                <li>Access to weight training equipment</li>
+                <li>Access to cardio equipment</li>
+                <li>Access to group fitness classes</li>
+                <li>Personalized training plan</li>
+              </ul>
+              <button onclick="selectPlan('Premium Plan')">Select</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+      function selectPlan(plan) {
+        try {
+          const userData = localStorage.getItem("userData");
+          const user = JSON.parse(userData);
+          if (!user || !user.email) {
+            alert("Please log in to select a plan.");
+            return;
+          }
+          const email = user.email;
+          fetch("http://localhost:3000/addPlan", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, plan }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              alert(data.message);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+      document
+        .getElementById("logout-btn")
+        .addEventListener("click", function () {
+          try {
+            localStorage.removeItem("userData");
+            window.location.href = "login.html";
+          } catch (error) {
+            console.error("Error:", error);
+          }
+        });
+      async function checkLoggedIn() {
+        try {
+          const userData = localStorage.getItem("userData");
+          const user = JSON.parse(userData);
+          if (!user) {
+            window.location.href =
+              "/Webtech-assignment-project-main/login.html";
+            return;
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+      window.onload = checkLoggedIn;
+    </script>
+  </body>
+</html>

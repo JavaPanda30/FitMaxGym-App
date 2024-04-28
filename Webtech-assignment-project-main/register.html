@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <style>
+      .container1 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        width: 100% !important;
+        background: url("pexels-cottonbro-4327024.jpg") center/cover no-repeat;
+      }
+
+      .glassmorphism {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        width: 400px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        animation: bounce 5s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+
+        50% {
+          transform: translateY(5px);
+        }
+      }
+
+      .content {
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 24px;
+        color: black;
+        margin: 20px 0;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      label {
+        font-size: 14px;
+        color: black;
+        margin: 5px 0;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        outline: none;
+      }
+
+      .btn-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .btn2 {
+        border: 2px solid white;
+        transition: color 0.2s ease;
+        border-radius: 5px;
+        padding: 10px 20px;
+        margin: 0 10px;
+      }
+
+      button {
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background: none;
+      }
+
+      .btn-container:hover {
+        color: black;
+      }
+
+      .alert {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container1">
+      <div class="glassmorphism">
+        <h1>Welcome to FitMax Gyms</h1>
+        <div class="content">
+          <h3>User SignUp</h3>
+          <form id="register-form">
+            <div>
+              <label for="username">Username:</label>
+              <input
+                type="text"
+                placeholder="Enter Username"
+                autocomplete="off"
+                id="username"
+                name="username"
+              />
+            </div>
+            <div>
+              <label for="email">Email:</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter Email"
+              />
+            </div>
+            <div>
+              <label for="password">Password:</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter Password"
+              />
+            </div>
+            <div class="btn-container">
+              <div class="btn2">
+                <button id="register-button" type="submit">SignUp</button>
+              </div>
+            </div>
+          </form>
+          <h3>
+            Already have an Account?
+            <a href="/Webtech-assignment-project-main/login.html">Login Now</a>
+          </h3>
+          <div id="alert-container"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const registerForm = document.querySelector("#register-form");
+        const alertContainer = document.querySelector("#alert-container");
+
+        registerForm.addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const username = document.querySelector("#username").value.trim();
+          const email = document.querySelector("#email").value.trim();
+          const password = document.querySelector("#password").value.trim();
+
+          // Basic client-side validation
+          if (!username || !email || !password) {
+            showAlert(
+              "Please provide username, email, and password.",
+              "danger"
+            );
+            return;
+          }
+
+          try {
+            const response = await fetch("http://localhost:3000/register", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ username, email, password }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              showAlert(data.message, "danger");
+            } else {
+              showAlert(
+                "Registration successful. Redirecting to login page...",
+                "danger"
+              );
+              setTimeout(() => {
+                window.location.href =
+                  "/Webtech-assignment-project-main/login.html";
+              }, 3000); // Redirect after 3 seconds
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            showAlert(
+              "An unexpected error occurred. Please try again later.",
+              "danger"
+            );
+          }
+        });
+
+        function showAlert(message, type) {
+          const alert = document.createElement("div");
+          alert.className = `alert alert-${type}`;
+          alert.textContent = message;
+          alertContainer.appendChild(alert);
+          setTimeout(() => {
+            alert.remove();
+          }, 5000);
+        }
+      });
+      async function checkLoggedIn() {
+        try {
+          const userData = localStorage.getItem("userData");
+          const user = JSON.parse(userData);
+          if (user) {
+            window.location.href =
+              "/Webtech-assignment-project-main/index.html";
+            return;
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+      window.onload = checkLoggedIn;
+    </script>
+  </body>
+</html>

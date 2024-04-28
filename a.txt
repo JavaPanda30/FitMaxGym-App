@@ -1,0 +1,737 @@
+
+// const express = require("express");
+// const bodyParser = require("body-parser");
+// const mongoose = require("mongoose");
+// const session = require("express-session");
+// const cors = require("cors");
+// const app = express();
+// const PORT = 3000;
+
+// // Middleware to enable CORS
+// app.use(cors());
+// // Middleware to parse JSON body
+// app.use(bodyParser.json());
+
+// // Connect to MongoDB
+// mongoose.connect("mongodb://localhost:27017/mygym", {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
+
+// // Define user schema
+// const userSchema = new mongoose.Schema({
+//   username: { type: String, required: true },
+//   email: { type: String, required: true, unique: true },
+//   password: { type: String, required: true },
+// });
+
+// // Create user model
+// const User = mongoose.model("User", userSchema);
+
+// // Middleware for session management
+// app.use(
+//   session({
+//     secret: "suyash",
+//     resave: false,
+//     saveUninitialized: false,
+//   })
+// );
+
+// // Signup endpoint
+// app.post("/register", async (req, res) => {
+//   const { username, email, password } = req.body;
+//   if (!username || !email || !password) {
+//     return res
+//       .status(400)
+//       .json({ message: "Please provide username, email, and password" });
+//   }
+
+//   try {
+//     // Check if user already exists
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).json({ message: "User already exists" });
+//     }
+//     // Create new user
+//     const newUser = await User.create({ username, email, password });
+//     // Send success response
+//     res
+//       .status(201)
+//       .json({ message: "User created successfully", user: newUser });
+//   } catch (error) {
+//     console.error(error);
+//     // Send error response
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
+
+// // Login endpoint
+// app.post("/login", async (req, res) => {
+//   const { email, password } = req.body;
+//   try {
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+//     if (user.password !== password) {
+//       return res.status(401).json({ message: "Incorrect password" });
+//     }
+//     req.session.userId = user._id;
+//     req.session.save(() => {
+//       res.status(200).json({ message: "Login successful", user });
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
+
+// // Protected route requiring authentication
+// app.get("/checkLoggedIn", async (req, res) => {
+//   if (!req.session.userId) {
+//     return res.status(401).json({ message: "Unauthorized" });
+//   }
+//   try {
+//     const user = await User.findById(req.session.userId);
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+//     res.status(200).json({ username: user.username, email: user.email });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
+
+// // Logout endpoint
+// app.post("/logout", (req, res) => {
+//   req.session.destroy((err) => {
+//     if (err) {
+//       console.error(err);
+//       return res.status(500).json({ message: "Failed to logout" });
+//     }
+//     res.clearCookie("connect.sid");
+//     res.status(200).json({ message: "Logout successful" });
+//   });
+// });
+
+// // Endpoint to get user profile information based on user ID
+// app.get("/profile/:userId", async (req, res) => {
+//   const userId = req.params.userId;
+
+//   try {
+//     // Find user by ID in MongoDB
+//     const user = await User.findById(userId);
+
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     // Return user information
+//     res.status(200).json({
+//       username: user.username,
+//       email: user.email,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
+// // Start server
+// app.listen(PORT, () => {
+//   console.log(`Server is running on http://localhost:${PORT}`);
+// });
+
+
+
+
+
+
+
+
+
+
+
+
+const express = require("express");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const session = require("express-session");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const app = express();
+const PORT = 3000;
+
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
+app.use(cookieParser()); 
+
+// Middleware for session management
+app.use(
+  session({
+    secret: "abab",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+// Connect to MongoDB
+mongoose.connect("mongodb://localhost:27017/mygym", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+// Define user schema
+const userSchema = new mongoose.Schema({
+  username: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+});
+
+// Create user model
+const User = mongoose.model("User", userSchema);
+
+// Signup endpoint
+app.post("/register", async (req, res) => {
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
+    return res
+      .status(400)
+      .json({ message: "Please provide username, email, and password" });
+  }
+
+  try {
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+    // Create new user
+    const newUser = await User.create({ username, email, password });
+    // Send success response
+    res
+      .status(201)
+      .json({ message: "User created successfully", user: newUser });
+  } catch (error) {
+    console.error(error);
+    // Send error response
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (user.password !== password) {
+      return res.status(401).json({ message: "Incorrect password" });
+    }
+    // Store user information in the cookie
+    try {
+      // Store user information in the cookie
+      var a = res.cookie(
+        "userData",
+        JSON.stringify({ username: user.username, email: user.email }),
+        { httpOnly: true }
+      );
+      console.log("Stored in Cookie");
+      console.log(a.coookies.userData);
+      res.status(200).json({ message: "Login successful", user });
+    } catch (error) {
+      console.error(error);
+      console.log("Cookie Not Stored");
+      res.status(500).json({ error });
+    }
+  } catch (error) {
+    console.error(error);
+    console.log(" other Error");
+    res.status(500).json({ error });
+  }
+});
+app.get("/user", (req, res) => {
+  const userData = req.cookies.userData;
+  if (!userData) {
+    return res.status(404).json({ message: "User data not found" });
+  }
+  const { username, email } = JSON.parse(userData);
+  res.status(200).json({ username, email });
+});
+
+// Protected route requiring authentication
+app.get("/checkLoggedIn", async (req, res) => {
+  const userId = req.cookies.userId;
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ username: user.username, email: user.email });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Logout endpoint
+app.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Failed to logout" });
+    }
+    res.clearCookie("userId");
+    res.status(200).json({ message: "Logout successful" });
+  });
+});
+
+// Endpoint to get user profile information based on user ID
+app.get("/profile/:userId", async (req, res) => {
+  try {
+    // Get the user ID from the request parameters
+    const userId = req.params.userId;
+
+    // Find user by ID in MongoDB
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return user information
+    res.status(200).json({
+      username: user.username,
+      email: user.email,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" ng-app="gymApp">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitMax Gym</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="index.css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body
+    style="
+      background-color: #000000;
+      background-image: linear-gradient(to top, #3c3737dc, #000000);
+      color: white;
+      height: 55vw;
+    "
+  >
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button
+            type="button"
+            class="navbar-toggle collapsed"
+            data-toggle="collapse"
+            data-target="#navbar-collapse"
+          >
+            <span class="sr-only">Toggle Navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="#" class="navbar-brand">FitMax</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="Services.html">Services</a></li>
+            <li><a href="Pricing.html">Pricing</a></li>
+            <li class="active"><a href="Contactus.html">Contact Us</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" id="logout-btn">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div ng-controller="ContactController">
+      <h1 align="center">Contact Us</h1>
+      <form name="contactForm" ng-submit="submitForm()" novalidate>
+        <!-- Form fields -->
+        <h3>
+          <label for="name">Name:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            ng-model="formData.name"
+            required
+            style="color: black"
+          />
+        </h3>
+
+        <h3>
+          <label for="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            ng-model="formData.email"
+            required
+            style="color: black"
+          />
+        </h3>
+
+        <h3>
+          <label for="message">Message:</label>
+          <textarea
+            id="message"
+            name="message"
+            ng-model="formData.message"
+            required
+            style="color: black"
+            cols="35"
+          ></textarea>
+        </h3>
+        <!-- Submit button -->
+        <h3>
+          <button type="submit" ng-disabled="contactForm.$invalid">
+            Submit
+          </button>
+        </h3>
+        <h6>
+          **All the content in this form will be sent to maxfit.gym@mymail.com
+        </h6>
+      </form>
+    </div>
+    <!-- AngularJS Library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <!-- AngularJS Controller -->
+    <script>
+      angular.module("gymApp", []).controller("ContactController", [
+        "$scope",
+        "$http",
+        function ($scope, $http) {
+          $scope.formData = {};
+
+          // Function to submit the form
+          $scope.submitForm = function () {
+            if ($scope.contactForm.$valid) {
+              $http({
+                method: "POST",
+                url: "saveFormData.js",
+                data: $scope.formData,
+                headers: { "Content-Type": "application/json" },
+              }).then(
+                function successCallback(response) {
+                  console.log("Form data saved successfully:", response.data);
+                  $scope.formData = {};
+                  $scope.contactForm.$setPristine();
+                },
+                function errorCallback(error) {
+                  console.error("Error saving form data:", error);
+                }
+              );
+            } else {
+              console.log("Form is invalid. Please check the fields.");
+            }
+          };
+        },
+      ]);
+    </script>
+  </body>
+  <script>
+    document
+      .getElementById("logout-btn")
+      .addEventListener("click", function (event) {
+        event.preventDefault();
+
+        fetch("http://localhost:3000/logout", {
+          method: "POST",
+          credentials: "same-origin",
+        })
+          .then((response) => {
+            if (response.ok) {
+              window.location.href =
+                "/Webtech-assignment-project-main/login.html";
+            } else {
+              console.error("Failed to logout");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      });
+  </script>
+  
+  <script>
+    // Function to check if user is logged in
+    async function checkLoggedIn() {
+      try {
+        const response = await fetch("http://localhost:3000/checkLoggedIn");
+        const data = await response.json();
+
+        if (response.ok && data.loggedIn) {
+          // User is logged in, do nothing
+          console.log("User is logged in");
+        } else {
+          // User is not logged in, redirect to login page
+          window.location.href = "/Webtech-assignment-project-main/login.html";
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        // Handle error
+      }
+    }
+    // Call the function when the page loads
+    // window.onload = checkLoggedIn;
+  </script>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" ng-app="gymApp">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitMax Gym</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="index.css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body
+    style="
+      background-color: #000000;
+      background-image: linear-gradient(to top, #3c3737dc, #000000);
+      color: white;
+      height: 100vh;
+    "
+  >
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button
+            type="button"
+            class="navbar-toggle collapsed"
+            data-toggle="collapse"
+            data-target="#navbar-collapse"
+          >
+            <span class="sr-only">Toggle Navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="#" class="navbar-brand">FitMax</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="Services.html">Services</a></li>
+            <li class="active"><a href="Pricing.html">Pricing</a></li>
+            <li><a href="Contactus.html">Contact Us</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" id="logout-btn">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <section id="pricing">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <h1>Pricing</h1>
+            <p>We offer flexible pricing options to suit your needs</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="plan center">
+              <h3>Basic Plan</h3>
+              <p class="price">$20/month</p>
+              <ul>
+                <li>Access to weight training equipment</li>
+                <li>Access to cardio equipment</li>
+              </ul>
+              <button onclick="selectPlan('Basic Plan')">Select</button>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="plan center">
+              <h3>Standard Plan</h3>
+              <p class="price">$40/month</p>
+              <ul>
+                <li>Access to weight training equipment</li>
+                <li>Access to cardio equipment</li>
+                <li>Access to group fitness classes</li>
+              </ul>
+              <button onclick="selectPlan('Standard Plan')">Select</button>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="plan center">
+              <h3>Premium Plan</h3>
+              <p class="price">$60/month</p>
+              <ul>
+                <li>Access to weight training equipment</li>
+                <li>Access to cardio equipment</li>
+                <li>Access to group fitness classes</li>
+                <li>Personalized training plan</li>
+              </ul>
+              <button onclick="selectPlan('Premium Plan')">Select</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+      function signUp() {
+        alert("Sign up button clicked!");
+      }
+
+      function selectPlan(plan) {
+        const email = getCookie("userData").email; // Get user's email from cookie
+        fetch("http://localhost:3000/addPlan", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, plan }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            alert(data.message); // Show success message
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2)
+          return JSON.parse(parts.pop().split(";").shift());
+      }
+      document
+        .getElementById("logout-btn")
+        .addEventListener("click", function (event) {
+          event.preventDefault();
+
+          fetch("http://localhost:3000/logout", {
+            method: "POST",
+            credentials: "same-origin",
+          })
+            .then((response) => {
+              if (response.ok) {
+                window.location.href =
+                  "/Webtech-assignment-project-main/login.html";
+              } else {
+                console.error("Failed to logout");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        });
+    </script>
+    <!-- <script>
+            // Function to check if user is logged in
+            async function checkLoggedIn() {
+              try {
+                const response = await fetch("http://localhost:3000/checkLoggedIn");
+                const data = await response.json();
+      
+                if (response.ok && data.loggedIn) {
+                  // User is logged in, do nothing
+                  console.log("User is logged in");
+                } else {
+                  // User is not logged in, redirect to login page
+                  window.location.href = "/Webtech-assignment-project-main/login.html";
+                }
+              } catch (error) {
+                console.error("Error:", error);
+                // Handle error
+              }
+            }
+      
+            // Call the function when the page loads
+            // window.onload = checkLoggedIn;
+          </script> -->
+  </body>
+</html>
