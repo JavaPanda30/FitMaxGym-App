@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="gymApp">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitMax Gym</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="index.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body
+    style="
+      background-color: #000000;
+      background-image: linear-gradient(to top, #3c3737dc, #000000);
+      color: white;
+      height: max-content;
+    "
+  >
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button
+            type="button"
+            class="navbar-toggle collapsed"
+            data-toggle="collapse"
+            data-target="#navbar-collapse"
+          >
+            <span class="sr-only">Toggle Navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="#" class="navbar-brand">FitMax</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="index.html">Home</a></li>
+            <li class="active"><a href="Services.html">Services</a></li>
+            <li><a href="Pricing.html">Pricing</a></li>
+            <li><a href="Contactus.html">Contact Us</a></li>
+            <li><a href="profile.html">Profile</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" id="logout-btn">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <section id="services">
+        <div class="row">
+          <div class="col-md-12">
+            <h1 class="text-center">Services</h1>
+            <p class="text-center">
+              We offer a range of services to help you reach your fitness goals
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="service">
+              <i class="fa fa-dumbbell"></i>
+              <h3>Weight Training</h3>
+              <img
+                src="https://images.pexels.com/photos/703012/pexels-photo-703012.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                alt="Weight Training"
+                width="300"
+              />
+              <p>
+                Our gym is fully equipped with weight training machines and free
+                weights to help you build strength and muscle.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="service">
+              <i class="fa fa-heartbeat"></i>
+              <h3>Cardio</h3>
+              <img
+                src="https://images.pexels.com/photos/1954524/pexels-photo-1954524.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                alt="Cardio"
+                width="300"
+              />
+              <p>
+                We have a range of cardio equipment including treadmills,
+                ellipticals and stationary bikes to help you improve your
+                cardiovascular fitness.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="service">
+              <i class="fa fa-users"></i>
+              <h3>Group Fitness Classes</h3>
+              <img
+                src="https://images.pexels.com/photos/1472887/pexels-photo-1472887.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                alt="Group Fitness Classes"
+                width="300"
+              />
+              <p>
+                We offer a range of group fitness classes including yoga, Zumba,
+                Pilates and more to help you stay motivated and have fun while
+                exercising.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="service">
+              <i class="fa fa-check"></i>
+              <h3>Personal Training</h3>
+              <img
+                src="https://images.pexels.com/photos/2204196/pexels-photo-2204196.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                alt="Personal Training"
+                width="300"
+              />
+              <p>
+                If you need some extra guidance and motivation, our certified
+                personal trainers are here to help you achieve your fitness
+                goals.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="service">
+              <i class="fa fa-trophy"></i>
+              <h3>Competition Prep</h3>
+              <img
+                src="https://images.pexels.com/photos/791763/pexels-photo-791763.jpeg"
+                alt="Competition Prep"
+                width="300"
+              />
+              <p>
+                If you're preparing for a bodybuilding or fitness competition,
+                our coaches can help you with your training and nutrition to
+                ensure you're in peak condition on competition day.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="service">
+              <i class="fa fa-wifi"></i>
+              <h3>Online Assistance</h3>
+              <img
+                src="https://images.pexels.com/photos/941572/pexels-photo-941572.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                alt="Online Assistance"
+                width="300"
+              />
+              <p>
+                If you can't make it to our gym, we offer online coaching
+                services to help you reach your fitness goals from anywhere in
+                the world.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script>
+      $("#logout-btn").on("click", function () {
+        try {
+          localStorage.removeItem("userData");
+          window.location.href = "login.html";
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      });
+
+      async function checkLoggedIn() {
+        try {
+          const userData = localStorage.getItem("userData");
+          const user = JSON.parse(userData);
+          if (!user) {
+             window.location.href =
+              "./login.html";
+            return;
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+
+      $(document).ready(function () {
+        checkLoggedIn();
+      });
+    </script>
+  </body>
+</html>
