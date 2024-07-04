@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" ng-App="container">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Us</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="index.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+
+  <body
+    style="
+      background-color: #000000;
+      background-image: linear-gradient(to top, #3c3737dc, #000000);
+      background-repeat: no-repeat;
+      color: white;
+      height: 150vh;
+    "
+  >
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button
+            type="button"
+            class="navbar-toggle collapsed"
+            data-toggle="collapse"
+            data-target="#navbar-collapse"
+          >
+            <span class="sr-only">Toggle Navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="#" class="navbar-brand">FitMax</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="Services.html">Services</a></li>
+            <li><a href="Pricing.html">Pricing</a></li>
+            <li class="active"><a href="Contactus.html">Contact Us</a></li>
+            <li><a href="profile.html">Profile</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" id="logout-btn">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div>
+      <h1 align="center">Contact Us</h1>
+      <form id="contactForm" novalidate>
+        <h3>
+          <label for="name">Name:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            style="color: black"
+          />
+        </h3>
+
+        <h3>
+          <label for="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            style="color: black"
+          />
+        </h3>
+
+        <h3>
+          <label for="message">Message:</label>
+          <textarea
+            id="message"
+            name="message"
+            required
+            style="color: black"
+            cols="35"
+          ></textarea>
+        </h3>
+        <h3>
+          <button type="button" onclick="submitForm()">Submit</button>
+        </h3>
+        <h6>
+          **All the content in this form will be sent to maxfit.gym@mymail.com
+        </h6>
+      </form>
+    </div>
+
+    <div id="queriesList">
+      <h2>All Feedbacks:</h2>
+      <ul id="queries"></ul>
+    </div>
+    <script>
+      function submitForm() {
+        var formData = {
+          name: document.getElementById("name").value,
+          email: document.getElementById("email").value,
+          query: document.getElementById("message").value,
+        };
+        fetch(
+          `https://fitmax-backend-bs1b.onrender.com/checkEmail/${formData.email}`,
+          {
+            method: "GET",
+          }
+        )
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Error: Failed to check email existence");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data.exists) {
+              alert(
+                "Error: You have already submitted a query with this email address."
+              );
+            } else {
+              submitQuery(formData);
+            }
+          })
+          .catch((error) => {
+            console.error("Error checking email existence:", error);
+            alert("Error With the Form!! Kindly Fill the form properly");
+          });
+      }
+
+      function submitQuery(formData) {
+        fetch("https://fitmax-backend-bs1b.onrender.com/submitQuery", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            alert(data.message);
+            // document.getElementById("contactForm").reset();
+            fetchQueries();
+          })
+          .catch((error) => {
+            console.error("Error saving form data:", error);
+          });
+      }
+
+      function fetchQueries() {
+        fetch("https://fitmax-backend-bs1b.onrender.com/queries", {
+          method: "GET",
+        })
+          .then((response) => response.json())
+          .then((queries) => {
+            const queriesList = document.getElementById("queries");
+            queriesList.innerHTML = "";
+            queries.forEach((query) => {
+              const listItem = document.createElement("li");
+              listItem.innerHTML = `
+            <div class="flex">
+            <br/>
+            <strong>Name:</strong> ${query.name}
+            <strong>Message:</strong> ${query.query}
+            <br/>
+            <div/>
+            <button class="delete-btn btn-danger" data-id="${query._id}">Report</button>
+        `;
+              queriesList.appendChild(listItem);
+            });
+            const deleteButtons = document.querySelectorAll(".delete-btn");
+            deleteButtons.forEach((button) => {
+              button.addEventListener("click", () => {
+                const queryId = button.getAttribute("data-id");
+                deleteQuery(queryId);
+              });
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching queries:", error);
+          });
+      }
+
+      fetchQueries();
+
+      function deleteQuery(queryId) {
+        fetch(`https://fitmax-backend-bs1b.onrender.com/queries/${queryId}`, {
+          method: "DELETE",
+        })
+          .then((response) => {
+            if (response.ok) {
+              fetchQueries();
+              console.log("Query deleted successfully");
+              alert(
+                "We have removed it from the query from the website for Reviewing."
+              );
+            } else {
+              console.error("Failed to delete query");
+            }
+          })
+          .catch((error) => {
+            console.error("Error deleting query:", error);
+          });
+      }
+
+      document
+        .getElementById("logout-btn")
+        .addEventListener("click", function () {
+          try {
+            localStorage.removeItem("userData");
+            window.location.href = "login.html";
+          } catch (error) {
+            console.error("Error:", error);
+          }
+        });
+      async function checkLoggedIn() {
+        try {
+          const userData = localStorage.getItem("userData");
+          const user = JSON.parse(userData);
+          if (!user) {
+            window.location.href = "./login.html";
+            return;
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+      window.onload = checkLoggedIn;
+    </script>
+  </body>
+</html>
