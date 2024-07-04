@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <style>
+      .container1 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        width: 100% !important;
+        background: url("./data/pexels-cottonbro-4327024.jpg") center/cover
+          no-repeat;
+      }
+
+      .glassmorphism {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        width: 400px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        animation: bounce 5s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+
+        50% {
+          transform: translateY(5px);
+        }
+      }
+
+      .content {
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 24px;
+        color: black;
+        margin: 20px 0;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      label {
+        font-size: 14px;
+        color: black;
+        margin: 5px 0;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        outline: none;
+      }
+
+      .btn-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .btn2 {
+        border: 2px solid white;
+        transition: color 0.2s ease;
+        border-radius: 5px;
+        padding: 10px 20px;
+        margin: 0 10px;
+      }
+
+      button {
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background: none;
+      }
+
+      .btn-container:hover {
+        color: black;
+      }
+
+      .alert {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container1">
+      <div class="glassmorphism">
+        <h1>Welcome to FitMax Gyms</h1>
+        <div class="content">
+          <h3>User Login</h3>
+          <form id="login-form">
+            <div>
+              <label for="email">Email:</label>
+              <input
+                type="email"
+                placeholder="Enter Email"
+                autocomplete="off"
+                id="email"
+                name="email"
+              />
+            </div>
+            <div>
+              <label for="password">Password:</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter Password"
+              />
+            </div>
+            <div class="btn-container">
+              <div class="btn2">
+                <button id="login-button" type="submit">Login</button>
+              </div>
+            </div>
+          </form>
+          <h3>Don't have an Account? Create One</h3>
+          <a href="./register.html">
+            <div class="btn-container">
+              <div class="btn2">
+                <button type="submit">Register</button>
+              </div>
+            </div>
+          </a>
+          <div id="alert-container"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const loginForm = document.querySelector("#login-form");
+        const emailInput = document.querySelector("#email");
+        const passwordInput = document.querySelector("#password");
+        const loginButton = document.querySelector("#login-button");
+        const alertContainer = document.querySelector("#alert-container");
+
+        loginForm.addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const email = emailInput.value.trim();
+          const password = passwordInput.value.trim();
+
+          if (!email || !password) {
+            showAlert("Please enter both email and password.", "danger");
+            return;
+          }
+
+          loginButton.disabled = true;
+          loginButton.textContent = "Logging in...";
+
+          try {
+            const response = await fetch(
+              "https://fitmax-backend-bs1b.onrender.com/login",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+              }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              showAlert(data.message, "danger");
+            } else {
+              localStorage.setItem("userData", JSON.stringify(data.user));
+              window.location.href = "./index.html";
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            showAlert(
+              "An unexpected error occurred. Please try again later.",
+              "danger"
+            );
+          } finally {
+            loginButton.disabled = false;
+            loginButton.textContent = "Login";
+          }
+        });
+        function showAlert(message, type) {
+          const alert = document.createElement("div");
+          alert.className = `alert alert-${type}`;
+          alert.textContent = message;
+          alertContainer.appendChild(alert);
+
+          setTimeout(function () {
+            alert.remove();
+          }, 3000);
+        }
+      });
+      async function checkLoggedIn() {
+        try {
+          const userData = localStorage.getItem("userData");
+          const user = JSON.parse(userData);
+          if (user) {
+            window.location.href = "./index.html";
+            return;
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+      window.onload = checkLoggedIn;
+    </script>
+  </body>
+</html>
