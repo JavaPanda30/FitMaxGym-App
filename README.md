@@ -1,12 +1,16 @@
-#Responsive Design
+# FitMax Gym Web App
 
-##Mobile
+Welcome to the FitMax Gym App! This application is designed to help gym members and staff manage activities, schedules, and fitness plans seamlessly. The app is built using Angular, React.js, and MongoDB.
+
+# Responsive Design
+
+## Mobile
 
 ![image](https://github.com/user-attachments/assets/77fd09fd-82fe-46e5-a8d5-53efe773fbc2)
 ![image](https://github.com/user-attachments/assets/ec9087d8-255c-4e66-903d-2994cda7f2dd)
 ![image](https://github.com/user-attachments/assets/89924c10-76b1-4a30-9a77-9133849cdd65)
 
-##Window
+## Windows
 
 ![image](https://github.com/user-attachments/assets/739b1ca8-da58-4f49-9658-b06f9e328a6e)
 ![image](https://github.com/user-attachments/assets/3e0ee319-5a26-466b-b55d-34f6a3022e5d)
